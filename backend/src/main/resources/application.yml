@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: custom-blog
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/custom_blog
+    username: root
+    password: 123456
+server:
+  servlet:
+    context-path: /api

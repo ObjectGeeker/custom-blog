@@ -1,0 +1,62 @@
+### 1. 构建工具生成的目录 (必须忽略)
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### 2. IntelliJ IDEA 特定文件 (必须忽略)
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# 如果是 Kotlin 项目
+.idea_modules/
+
+### 3. Spring Boot 运行时日志与临时文件
+logs/
+*.log
+system.properties
+
+### 4. 操作系统生成的文件 (可选，建议忽略)
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+### 5. 敏感配置文件与本地配置 (非常重要)
+# 忽略包含密码、密钥的本地配置文件
+application-local.yml
+application-local.properties
+*.jks
+*.p12
+*.pfx
+
+### 6. 其他常见忽略项
+.class
+.project
+.classpath
+.settings/
+.springBeans
+bin/
+!.mvn/wrapper/maven-wrapper.jar
