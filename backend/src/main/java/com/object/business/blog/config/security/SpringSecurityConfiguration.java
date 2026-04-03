@@ -17,25 +17,71 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfiguration {
 
-    private final String[] requestMatchers = {"/security/login", "/security/register"};
+    /**
+     * 允许匿名访问的接口
+     */
+    private final String[] permitAllMatchers = {
+            // 登录接口
+            "/security/login",
+            // 标签查询接口
+            "/api/tag/getById",
+            "/api/tag/list",
+            "/api/tag/tree",
+            // 分类查询接口
+            "/api/category/getById",
+            "/api/category/list",
+            "/api/category/tree",
+            // 文章查询接口
+            "/api/article/getById",
+            "/api/article/list"
+    };
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * CORS 跨域配置
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        // 允许的前端域名，生产环境建议配置具体域名
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://127.0.0.1:3000"));
+        // 允许的 HTTP 方法
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // 允许的请求头
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+        // 允许携带凭证（如 Cookie）
+        configuration.setAllowCredentials(true);
+        // 预检请求缓存时间（秒）
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         // 使用JWT，所以禁用CSRF
         httpSecurity.csrf(CsrfConfigurer::disable)
+                // 启用 CORS 跨域
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // 禁用SESSION
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizationRegistry -> authorizationRegistry
@@ -43,7 +89,7 @@ public class SpringSecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/", "/*.html", "/login.html").permitAll()
                         // 对登录注册允许匿名访问
                         // 访问授权，所有 /user/** 路径下的请求需要 ADMIN 角色。注意；Spring Security在处理角色时，会自动为角色名添加"ROLE_"前缀。因此，"ADMIN"角色实际上对应权限"ROLE_ADMIN"。
-                        .requestMatchers(requestMatchers).permitAll()
+                        .requestMatchers(permitAllMatchers).permitAll()
                         // 跨域请求会先进行一次options请求
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         // 对所有请求开启授权保护
