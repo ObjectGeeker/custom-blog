@@ -6,6 +6,8 @@ spring:
     url: jdbc:mysql://localhost:3306/custom_blog
     username: root
     password: 123456
+  profiles:
+    active: local
 server:
   servlet:
     context-path: /api
