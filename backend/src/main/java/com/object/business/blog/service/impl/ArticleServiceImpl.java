@@ -94,7 +94,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      */
     private ArticleVO convertToVO(Article article) {
         ArticleVO vo = new ArticleVO();
-        BeanUtil.copyProperties(article, vo);
+        BeanUtil.copyProperties(article, vo, "tags", "categories", "createUser", "updateUser");
         // 将JSON字符串转换为列表
         vo.setTags(JSONUtil.toList(article.getTags(), String.class));
         vo.setCategories(JSONUtil.toList(article.getCategories(), String.class));

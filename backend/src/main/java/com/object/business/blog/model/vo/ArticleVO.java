@@ -41,10 +41,12 @@ public class ArticleVO {
      */
     private LocalDateTime createTime;
 
+    //todo createUser和updateUser需要使用mybatis查询后置插件，每次都填充对应的人员
+
     /**
      * 创建人id
      */
-    private String createUser;
+    private LoginUser createUser;
 
     /**
      * 更新时间
@@ -54,5 +56,5 @@ public class ArticleVO {
     /**
      * 更新人
      */
-    private String updateUser;
+    private LoginUser updateUser;
 }
