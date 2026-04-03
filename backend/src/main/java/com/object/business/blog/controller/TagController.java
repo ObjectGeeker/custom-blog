@@ -1,6 +1,7 @@
 package com.object.business.blog.controller;
 
 import com.object.business.blog.common.BaseResponse;
+import com.object.business.blog.common.IdRequest;
 import com.object.business.blog.common.ResultUtils;
 import com.object.business.blog.model.request.TagCreateRequest;
 import com.object.business.blog.model.request.TagQueryRequest;
@@ -17,7 +18,7 @@ import java.util.List;
  * 标签表 控制器
  */
 @RestController
-@RequestMapping("/api/tag")
+@RequestMapping("/tag")
 @RequiredArgsConstructor
 public class TagController {
 
@@ -45,8 +46,8 @@ public class TagController {
      * 删除标签
      */
     @PostMapping("/delete")
-    public BaseResponse<Boolean> delete(@RequestBody String id) {
-        boolean result = tagService.deleteTag(id);
+    public BaseResponse<Boolean> delete(@Valid @RequestBody IdRequest request) {
+        boolean result = tagService.deleteTag(request.getId());
         return ResultUtils.success(result);
     }
 
@@ -54,8 +55,8 @@ public class TagController {
      * 根据ID查询标签
      */
     @PostMapping("/getById")
-    public BaseResponse<TagVO> getById(@RequestBody String id) {
-        TagVO tagVO = tagService.getTagById(id);
+    public BaseResponse<TagVO> getById(@Valid @RequestBody IdRequest request) {
+        TagVO tagVO = tagService.getTagById(request.getId());
         return ResultUtils.success(tagVO);
     }
 

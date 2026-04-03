@@ -37,16 +37,16 @@ public class SpringSecurityConfiguration {
             // 登录接口
             "/security/login",
             // 标签查询接口
-            "/api/tag/getById",
-            "/api/tag/list",
-            "/api/tag/tree",
+            "/tag/getById",
+            "/tag/list",
+            "/tag/tree",
             // 分类查询接口
-            "/api/category/getById",
-            "/api/category/list",
-            "/api/category/tree",
+            "/category/getById",
+            "/category/list",
+            "/category/tree",
             // 文章查询接口
-            "/api/article/getById",
-            "/api/article/list"
+            "/article/getById",
+            "/article/list"
     };
 
     @Bean

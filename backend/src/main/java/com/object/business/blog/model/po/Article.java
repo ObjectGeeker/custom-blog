@@ -1,9 +1,6 @@
 package com.object.business.blog.model.po;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -49,6 +46,7 @@ public class Article {
     /**
      * 创建人id
      */
+    @TableField(fill = FieldFill.INSERT)
     private String createUser;
 
     /**
@@ -59,6 +57,7 @@ public class Article {
     /**
      * 更新人
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateUser;
 
     /**

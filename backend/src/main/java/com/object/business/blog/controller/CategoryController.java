@@ -1,6 +1,7 @@
 package com.object.business.blog.controller;
 
 import com.object.business.blog.common.BaseResponse;
+import com.object.business.blog.common.IdRequest;
 import com.object.business.blog.common.ResultUtils;
 import com.object.business.blog.model.request.CategoryCreateRequest;
 import com.object.business.blog.model.request.CategoryQueryRequest;
@@ -17,7 +18,7 @@ import java.util.List;
  * 分类表 控制器
  */
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/category")
 @RequiredArgsConstructor
 public class CategoryController {
 
@@ -45,8 +46,8 @@ public class CategoryController {
      * 删除分类
      */
     @PostMapping("/delete")
-    public BaseResponse<Boolean> delete(@RequestBody String id) {
-        boolean result = categoryService.deleteCategory(id);
+    public BaseResponse<Boolean> delete(@Valid @RequestBody IdRequest request) {
+        boolean result = categoryService.deleteCategory(request.getId());
         return ResultUtils.success(result);
     }
 
@@ -54,8 +55,8 @@ public class CategoryController {
      * 根据ID查询分类
      */
     @PostMapping("/getById")
-    public BaseResponse<CategoryVO> getById(@RequestBody String id) {
-        CategoryVO categoryVO = categoryService.getCategoryById(id);
+    public BaseResponse<CategoryVO> getById(@Valid @RequestBody IdRequest request) {
+        CategoryVO categoryVO = categoryService.getCategoryById(request.getId());
         return ResultUtils.success(categoryVO);
     }
 

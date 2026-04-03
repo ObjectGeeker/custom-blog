@@ -1,6 +1,7 @@
 package com.object.business.blog.controller;
 
 import com.object.business.blog.common.BaseResponse;
+import com.object.business.blog.common.IdRequest;
 import com.object.business.blog.common.ResultUtils;
 import com.object.business.blog.model.request.ArticleCreateRequest;
 import com.object.business.blog.model.request.ArticleQueryRequest;
@@ -20,7 +21,7 @@ import java.util.List;
  * 文章表 控制器
  */
 @RestController
-@RequestMapping("/api/article")
+@RequestMapping("/article")
 @RequiredArgsConstructor
 public class ArticleController {
 
@@ -48,8 +49,8 @@ public class ArticleController {
      * 删除文章
      */
     @PostMapping("/delete")
-    public BaseResponse<Boolean> delete(@RequestBody String id) {
-        boolean result = articleService.deleteArticle(id);
+    public BaseResponse<Boolean> delete(@Valid @RequestBody IdRequest request) {
+        boolean result = articleService.deleteArticle(request.getId());
         return ResultUtils.success(result);
     }
 
@@ -57,8 +58,8 @@ public class ArticleController {
      * 根据ID查询文章
      */
     @PostMapping("/getById")
-    public BaseResponse<ArticleVO> getById(@RequestBody String id) {
-        ArticleVO articleVO = articleService.getArticleById(id);
+    public BaseResponse<ArticleVO> getById(@Valid @RequestBody IdRequest request) {
+        ArticleVO articleVO = articleService.getArticleById(request.getId());
         return ResultUtils.success(articleVO);
     }
 

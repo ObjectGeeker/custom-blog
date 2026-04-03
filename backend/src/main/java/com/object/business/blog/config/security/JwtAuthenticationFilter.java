@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 boolean verified = JWTUtil.verify(accessToken, key);
                 if (verified) {
                     JWT jwt = JWTUtil.parseToken(accessToken);
-                    // validate(0) 校验标准 exp / nbf / iat claim，leeway = 0 秒
+                    jwt.setKey(key);
                     if (jwt.validate(0)) {
                         String jsonStr = (String) jwt.getPayload("systemUser");
                         LoginUser loginUser = JSONUtil.toBean(jsonStr, LoginUser.class);
