@@ -12,39 +12,40 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-sm">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link
-          href="/"
-          className="text-lg font-semibold tracking-tight transition-colors hover:text-muted-foreground"
-        >
-          {siteConfig.title}
-        </Link>
+    <header className="navbar sticky top-0 z-40 border-b border-base-200 bg-base-100/85 px-4 backdrop-blur-md sm:px-6">
+      <div className="navbar mx-auto min-h-14 w-full max-w-6xl justify-between gap-2 px-0">
+        <div className="navbar-start w-auto shrink-0">
+          <Link
+            href="/"
+            className="btn btn-ghost text-lg font-semibold tracking-tight text-base-content"
+          >
+            {siteConfig.title}
+          </Link>
+        </div>
 
-        {/* Desktop nav */}
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="navbar-end hidden w-auto flex-none items-center gap-1 md:flex">
           <CategoryNav />
           <SearchBar />
           <ThemeToggle />
         </div>
 
-        {/* Mobile toggle */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="navbar-end flex flex-none gap-1 md:hidden">
           <ThemeToggle />
           <button
+            type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-border transition-colors hover:bg-secondary"
-            aria-label="Toggle menu"
+            className="btn btn-ghost btn-square btn-sm border border-base-200"
+            aria-label="打开菜单"
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
-        <div className="border-t border-border px-4 pb-4 pt-3 md:hidden">
-          <div className="space-y-3">
+        <div className="border-t border-base-200 px-4 pb-4 pt-3 md:hidden">
+          <div className="mx-auto flex max-w-6xl flex-col gap-3">
             <SearchBar />
             <CategoryNav />
           </div>

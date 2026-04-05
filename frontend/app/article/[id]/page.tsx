@@ -44,15 +44,15 @@ export default function ArticlePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-base-100">
         <Header />
         <main className="mx-auto flex max-w-6xl flex-1 px-4 py-8 sm:px-6">
           <div className="flex-1 space-y-4">
-            <div className="h-10 w-2/3 animate-pulse rounded bg-secondary" />
-            <div className="h-6 w-1/3 animate-pulse rounded bg-secondary" />
+            <div className="skeleton h-10 w-2/3" />
+            <div className="skeleton h-6 w-1/3" />
             <div className="mt-8 space-y-3">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="h-4 animate-pulse rounded bg-secondary" />
+                <div key={i} className="skeleton h-4 w-full" />
               ))}
             </div>
           </div>
@@ -64,15 +64,12 @@ export default function ArticlePage() {
 
   if (!article) {
     return (
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-base-100">
         <Header />
-        <main className="flex flex-1 items-center justify-center">
+        <main className="flex flex-1 items-center justify-center px-4">
           <div className="text-center">
-            <p className="mb-4 text-lg text-muted-foreground">文章不存在</p>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 text-sm text-foreground underline underline-offset-4"
-            >
+            <p className="mb-4 text-lg text-base-content/60">文章不存在</p>
+            <Link href="/" className="btn btn-ghost btn-sm gap-1">
               <ArrowLeft className="h-4 w-4" /> 返回首页
             </Link>
           </div>
@@ -83,37 +80,38 @@ export default function ArticlePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-base-100">
       <Header />
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 gap-6 px-4 py-8 sm:px-6">
         {/* Left Sidebar - Related Articles */}
         <aside className="hidden w-56 shrink-0 lg:block">
-          <div className="sticky top-20">
-            <p className="mb-3 text-sm font-semibold">同分类文章</p>
+          <div className="sticky top-24">
+            <p className="mb-3 text-sm font-semibold text-base-content">同分类文章</p>
             {relatedArticles.length === 0 ? (
-              <p className="text-xs text-muted-foreground">暂无相关文章</p>
+              <p className="text-xs text-base-content/50">暂无相关文章</p>
             ) : (
-              <nav className="space-y-1">
+              <ul className="menu menu-sm rounded-box border border-base-200 bg-base-100 p-2">
                 {relatedArticles.map((a) => (
-                  <Link
-                    key={a.id}
-                    href={`/article/${a.id}`}
-                    className="block truncate rounded-sm px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-                  >
-                    {a.title}
-                  </Link>
+                  <li key={a.id}>
+                    <Link href={`/article/${a.id}`} className="truncate text-sm">
+                      {a.title}
+                    </Link>
+                  </li>
                 ))}
-              </nav>
+              </ul>
             )}
           </div>
         </aside>
 
         {/* Main Content */}
-        <article className="min-w-0 flex-1">
-          <header className="mb-8 border-b border-border pb-6">
-            <h1 className="mb-4 text-3xl font-bold tracking-tight">{article.title}</h1>
-            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+        <article className="card card-border min-w-0 flex-1 border-base-200 bg-base-100 shadow-sm">
+          <div className="card-body px-4 py-8 sm:px-8">
+          <header className="mb-8 border-b border-base-200 pb-6">
+            <h1 className="mb-4 text-3xl font-bold tracking-tight text-base-content">
+              {article.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-4 text-sm text-base-content/60">
               <span className="flex items-center gap-1.5">
                 <Calendar className="h-4 w-4" />
                 {formatDate(article.createTime)}
@@ -138,11 +136,12 @@ export default function ArticlePage() {
           </header>
 
           <MarkdownRenderer content={article.content} />
+          </div>
         </article>
 
         {/* Right Sidebar - TOC */}
         <aside className="hidden w-52 shrink-0 xl:block">
-          <div className="sticky top-20">
+          <div className="sticky top-24 rounded-box border border-base-200 bg-base-100 p-4">
             <TableOfContents headings={headings} />
           </div>
         </aside>

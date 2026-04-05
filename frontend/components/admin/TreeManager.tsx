@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { DragEvent } from "react";
 import {
   ChevronRight,
   ChevronDown,
@@ -9,8 +10,40 @@ import {
   Trash2,
   Check,
   X,
+  GripVertical,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+function parentKey(parentId: string | null): string {
+  return parentId ?? "";
+}
+
+function insertBeforeSiblingIds(siblingIds: string[], draggedId: string, beforeId: string): string[] {
+  if (draggedId === beforeId) return siblingIds;
+  const without = siblingIds.filter((id) => id !== draggedId);
+  const idx = without.indexOf(beforeId);
+  if (idx < 0) return siblingIds;
+  const next = [...without];
+  next.splice(idx, 0, draggedId);
+  return next;
+}
+
+function moveToEnd(siblingIds: string[], draggedId: string): string[] {
+  const without = siblingIds.filter((id) => id !== draggedId);
+  return [...without, draggedId];
+}
+
+function parseTreeDragPayload(e: DragEvent): { id: string; parentKey: string } | null {
+  try {
+    const raw = e.dataTransfer.getData("application/json");
+    if (!raw) return null;
+    const o = JSON.parse(raw) as { id?: string; parentKey?: string };
+    if (!o.id) return null;
+    return { id: o.id, parentKey: o.parentKey ?? "" };
+  } catch {
+    return null;
+  }
+}
 
 export interface TreeNode {
   id: string;
@@ -27,17 +60,66 @@ interface TreeManagerProps {
   onCreate: (name: string, desc: string, parentId: string | null, level: number) => Promise<void>;
   onUpdate: (id: string, name: string, desc: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  /** 同级拖动排序完成后调用，传入新的同级 id 顺序（含从 0 递增的语义，由调用方写入后端） */
+  onReorderSiblings?: (parentId: string | null, orderedChildIds: string[]) => Promise<void>;
 }
 
 interface TreeNodeItemProps {
   node: TreeNode;
+  parentId: string | null;
+  siblings: TreeNode[];
   maxLevel: number;
   onCreate: TreeManagerProps["onCreate"];
   onUpdate: TreeManagerProps["onUpdate"];
   onDelete: TreeManagerProps["onDelete"];
+  onReorderSiblings?: TreeManagerProps["onReorderSiblings"];
 }
 
-function TreeNodeItem({ node, maxLevel, onCreate, onUpdate, onDelete }: TreeNodeItemProps) {
+function SiblingEndDropZone({
+  parentId,
+  siblingIds,
+  onReorderSiblings,
+}: {
+  parentId: string | null;
+  siblingIds: string[];
+  onReorderSiblings: NonNullable<TreeManagerProps["onReorderSiblings"]>;
+}) {
+  if (siblingIds.length < 2) return null;
+
+  return (
+    <div
+      className="ml-6 py-1 pl-2 text-xs text-muted-foreground/80"
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+      }}
+      onDrop={async (e) => {
+        e.preventDefault();
+        const p = parseTreeDragPayload(e);
+        if (!p || p.parentKey !== parentKey(parentId)) return;
+        const next = moveToEnd(siblingIds, p.id);
+        try {
+          await onReorderSiblings(parentId, next);
+        } catch {
+          /* parent */
+        }
+      }}
+    >
+      拖放到此处可移到同级末尾
+    </div>
+  );
+}
+
+function TreeNodeItem({
+  node,
+  parentId,
+  siblings,
+  maxLevel,
+  onCreate,
+  onUpdate,
+  onDelete,
+  onReorderSiblings,
+}: TreeNodeItemProps) {
   const [expanded, setExpanded] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(node.name);
@@ -88,9 +170,51 @@ function TreeNodeItem({ node, maxLevel, onCreate, onUpdate, onDelete }: TreeNode
     setLoading(false);
   }
 
+  const rowDragProps =
+    onReorderSiblings != null
+      ? {
+          onDragOver: (e: DragEvent) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+          },
+          onDrop: async (e: DragEvent) => {
+            e.preventDefault();
+            const p = parseTreeDragPayload(e);
+            if (!p || p.parentKey !== parentKey(parentId) || p.id === node.id) return;
+            const ids = siblings.map((s) => s.id);
+            const next = insertBeforeSiblingIds(ids, p.id, node.id);
+            try {
+              await onReorderSiblings(parentId, next);
+            } catch {
+              /* parent */
+            }
+          },
+        }
+      : {};
+
   return (
     <div>
-      <div className="group flex items-center gap-1 rounded-md py-1 pr-2 hover:bg-secondary">
+      <div
+        className="group flex items-center gap-1 rounded-md py-1 pr-2 hover:bg-secondary"
+        {...rowDragProps}
+      >
+        {onReorderSiblings != null && (
+          <span
+            draggable
+            onDragStart={(e) => {
+              e.dataTransfer.setData(
+                "application/json",
+                JSON.stringify({ id: node.id, parentKey: parentKey(parentId) }),
+              );
+              e.dataTransfer.effectAllowed = "move";
+            }}
+            className="flex h-6 w-6 shrink-0 cursor-grab items-center justify-center text-muted-foreground active:cursor-grabbing"
+            title="拖动排序（仅同级）"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <GripVertical className="h-4 w-4" />
+          </span>
+        )}
         <button
           onClick={() => setExpanded(!expanded)}
           className="flex h-6 w-6 shrink-0 items-center justify-center text-muted-foreground"
@@ -180,12 +304,22 @@ function TreeNodeItem({ node, maxLevel, onCreate, onUpdate, onDelete }: TreeNode
             <TreeNodeItem
               key={child.id}
               node={child}
+              parentId={node.id}
+              siblings={node.children}
               maxLevel={maxLevel}
               onCreate={onCreate}
               onUpdate={onUpdate}
               onDelete={onDelete}
+              onReorderSiblings={onReorderSiblings}
             />
           ))}
+          {onReorderSiblings != null && (
+            <SiblingEndDropZone
+              parentId={node.id}
+              siblingIds={node.children.map((c) => c.id)}
+              onReorderSiblings={onReorderSiblings}
+            />
+          )}
         </div>
       )}
 
@@ -227,7 +361,14 @@ function TreeNodeItem({ node, maxLevel, onCreate, onUpdate, onDelete }: TreeNode
   );
 }
 
-export function TreeManager({ tree, maxLevel = 4, onCreate, onUpdate, onDelete }: TreeManagerProps) {
+export function TreeManager({
+  tree,
+  maxLevel = 4,
+  onCreate,
+  onUpdate,
+  onDelete,
+  onReorderSiblings,
+}: TreeManagerProps) {
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState("");
   const [newDesc, setNewDesc] = useState("");
@@ -253,12 +394,18 @@ export function TreeManager({ tree, maxLevel = 4, onCreate, onUpdate, onDelete }
         <TreeNodeItem
           key={node.id}
           node={node}
+          parentId={null}
+          siblings={tree}
           maxLevel={maxLevel}
           onCreate={onCreate}
           onUpdate={onUpdate}
           onDelete={onDelete}
+          onReorderSiblings={onReorderSiblings}
         />
       ))}
+      {onReorderSiblings != null && (
+        <SiblingEndDropZone parentId={null} siblingIds={tree.map((n) => n.id)} onReorderSiblings={onReorderSiblings} />
+      )}
 
       {adding ? (
         <div className="flex items-center gap-2 py-1">

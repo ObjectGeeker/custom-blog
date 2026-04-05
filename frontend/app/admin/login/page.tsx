@@ -33,65 +33,59 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <h1 className="mb-2 text-2xl font-bold tracking-tight">管理员登录</h1>
-          <p className="text-sm text-muted-foreground">请输入账号和密码进入后台</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="account" className="mb-1.5 block text-sm font-medium">
-              账号
-            </label>
-            <input
-              id="account"
-              type="text"
-              value={account}
-              onChange={(e) => setAccount(e.target.value)}
-              placeholder="请输入账号"
-              required
-              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
-            />
+    <div className="flex min-h-screen items-center justify-center bg-base-200 px-4">
+      <div className="card card-border w-full max-w-sm border-base-300 bg-base-100 shadow-xl">
+        <div className="card-body gap-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold tracking-tight text-base-content">管理员登录</h1>
+            <p className="mt-2 text-sm text-base-content/60">请输入账号和密码进入后台</p>
           </div>
 
-          <div>
-            <label htmlFor="password" className="mb-1.5 block text-sm font-medium">
-              密码
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="请输入密码"
-              required
-              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend text-sm">账号</legend>
+              <input
+                id="account"
+                type="text"
+                value={account}
+                onChange={(e) => setAccount(e.target.value)}
+                placeholder="请输入账号"
+                required
+                className="input input-bordered w-full border-base-300 bg-base-100"
+              />
+            </fieldset>
 
-          {error && (
-            <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {error}
-            </p>
-          )}
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend text-sm">密码</legend>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="请输入密码"
+                required
+                className="input input-bordered w-full border-base-300 bg-base-100"
+              />
+            </fieldset>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-          >
-            {loading ? (
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-            ) : (
-              <>
-                <LogIn className="h-4 w-4" />
-                登录
-              </>
+            {error && (
+              <div role="alert" className="alert alert-error text-sm">
+                <span>{error}</span>
+              </div>
             )}
-          </button>
-        </form>
+
+            <button type="submit" disabled={loading} className="btn btn-primary w-full gap-2">
+              {loading ? (
+                <span className="loading loading-spinner loading-sm" />
+              ) : (
+                <>
+                  <LogIn className="h-4 w-4" />
+                  登录
+                </>
+              )}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

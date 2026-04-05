@@ -54,35 +54,29 @@ function SearchContent() {
   return (
     <>
       {/* Search Form */}
-      <div className="border-b border-border">
+      <div className="border-b border-base-200 bg-base-200/20">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
           <form onSubmit={handleSearch} className="relative mx-auto max-w-xl">
-            <SearchIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            <SearchIcon className="absolute left-4 top-1/2 z-1 h-5 w-5 -translate-y-1/2 text-base-content/40" />
             <input
               type="text"
               value={searchTitle}
               onChange={(e) => setSearchTitle(e.target.value)}
               placeholder="输入关键词搜索文章..."
-              className="h-12 w-full rounded-lg border border-border bg-background pl-12 pr-4 text-base outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
+              className="input input-bordered input-lg h-12 w-full border-base-200 bg-base-100 pl-12 pr-4 placeholder:text-base-content/40"
             />
           </form>
 
           {(title || category || tag) && (
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm text-muted-foreground">
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
               {title && (
-                <span className="rounded-md bg-secondary px-2.5 py-1">
-                  关键词: {title}
-                </span>
+                <span className="badge badge-neutral badge-lg badge-outline">关键词: {title}</span>
               )}
               {category && (
-                <span className="rounded-md bg-secondary px-2.5 py-1">
-                  分类: {category}
-                </span>
+                <span className="badge badge-neutral badge-lg badge-outline">分类: {category}</span>
               )}
               {tag && (
-                <span className="rounded-md bg-secondary px-2.5 py-1">
-                  标签: {tag}
-                </span>
+                <span className="badge badge-neutral badge-lg badge-outline">标签: {tag}</span>
               )}
             </div>
           )}
@@ -96,17 +90,15 @@ function SearchContent() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="h-40 animate-pulse rounded-lg border border-border bg-secondary"
+                className="skeleton h-40 rounded-box border border-base-200"
               />
             ))}
           </div>
         ) : articles.length === 0 ? (
-          <p className="py-16 text-center text-muted-foreground">
-            没有找到相关文章
-          </p>
+          <p className="py-16 text-center text-base-content/60">没有找到相关文章</p>
         ) : (
           <>
-            <p className="mb-6 text-sm text-muted-foreground">
+            <p className="mb-6 text-sm text-base-content/60">
               找到 {articles.length} 篇文章
             </p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -123,13 +115,13 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-base-100">
       <Header />
       <main className="flex-1">
         <Suspense
           fallback={
             <div className="flex items-center justify-center py-16">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-foreground" />
+              <span className="loading loading-spinner loading-lg text-primary" />
             </div>
           }
         >

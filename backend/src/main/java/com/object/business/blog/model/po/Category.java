@@ -44,6 +44,12 @@ public class Category {
     private String parentId;
 
     /**
+     * 顺序号（列名 order 为 MySQL 保留字，须反引号）
+     */
+    @TableField("`order`")
+    private Integer order;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;

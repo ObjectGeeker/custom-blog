@@ -29,4 +29,9 @@ public class CategoryUpdateRequest {
      * 父级分类的id,一级分类为空
      */
     private String parentId;
+
+    /**
+     * 顺序号（同级排序，数值越小越靠前）
+     */
+    private Integer order;
 }

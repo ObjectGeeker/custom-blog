@@ -5,6 +5,40 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { getCategoryTree } from "@/lib/api/category";
 import type { CategoryVO } from "@/lib/types";
+import { cn } from "@/lib/utils";
+
+function CategoryMenuItem({
+  cat,
+  onNavigate,
+}: {
+  cat: CategoryVO;
+  onNavigate: () => void;
+}) {
+  const hasChildren = cat.children && cat.children.length > 0;
+
+  if (!hasChildren) {
+    return (
+      <li>
+        <Link href={`/search?category=${cat.id}`} onClick={onNavigate}>
+          {cat.categoryName}
+        </Link>
+      </li>
+    );
+  }
+
+  return (
+    <li>
+      <details>
+        <summary>{cat.categoryName}</summary>
+        <ul>
+          {cat.children.map((child) => (
+            <CategoryMenuItem key={child.id} cat={child} onNavigate={onNavigate} />
+          ))}
+        </ul>
+      </details>
+    </li>
+  );
+}
 
 function CategoryItem({ cat }: { cat: CategoryVO }) {
   const [open, setOpen] = useState(false);
@@ -25,7 +59,7 @@ function CategoryItem({ cat }: { cat: CategoryVO }) {
     return (
       <Link
         href={`/search?category=${cat.id}`}
-        className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+        className="btn btn-ghost btn-sm font-normal text-base-content/80 hover:text-base-content"
       >
         {cat.categoryName}
       </Link>
@@ -33,31 +67,34 @@ function CategoryItem({ cat }: { cat: CategoryVO }) {
   }
 
   return (
-    <div ref={ref} className="relative">
+    <div
+      ref={ref}
+      className={cn("dropdown dropdown-bottom dropdown-start", open && "dropdown-open")}
+    >
       <button
+        type="button"
+        tabIndex={0}
+        className="btn btn-ghost btn-sm gap-1 font-normal text-base-content/80 hover:text-base-content"
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+        aria-expanded={open}
       >
         {cat.categoryName}
         <ChevronDown
-          className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`}
+          className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")}
         />
       </button>
-
-      {open && (
-        <div className="absolute left-0 top-full z-50 mt-1 min-w-40 rounded-md border border-border bg-background p-1 shadow-lg">
-          {cat.children.map((child) => (
-            <Link
-              key={child.id}
-              href={`/search?category=${child.id}`}
-              onClick={() => setOpen(false)}
-              className="block rounded-sm px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-            >
-              {child.categoryName}
-            </Link>
-          ))}
-        </div>
-      )}
+      <ul
+        tabIndex={-1}
+        className="dropdown-content menu menu-sm z-[100] mb-1 mt-1 max-h-[min(70vh,24rem)] w-52 overflow-y-auto overflow-x-hidden rounded-box border border-base-200 bg-base-100 p-2 shadow-lg"
+      >
+        {cat.children.map((child) => (
+          <CategoryMenuItem
+            key={child.id}
+            cat={child}
+            onNavigate={() => setOpen(false)}
+          />
+        ))}
+      </ul>
     </div>
   );
 }
@@ -72,7 +109,7 @@ export function CategoryNav() {
   if (tree.length === 0) return null;
 
   return (
-    <nav className="flex items-center gap-0.5">
+    <nav className="flex flex-wrap items-center gap-0.5">
       {tree.map((cat) => (
         <CategoryItem key={cat.id} cat={cat} />
       ))}

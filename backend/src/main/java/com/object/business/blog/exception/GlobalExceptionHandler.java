@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(exception = RuntimeException.class)
     public BaseResponse<String> businessExceptionHandler(RuntimeException e) {
-        log.info("全局异常处理器 - 捕获到运行时异常 errorCode: {}, errorMsg: {}, exception: {}", ErrorCode.SYSTEM_ERROR.getErrorCode(), e.getMessage(), e.toString());
+        log.info("全局异常处理器 - 捕获到运行时异常", e);
         return ResultUtils.error(ErrorCode.SYSTEM_ERROR);
     }
 

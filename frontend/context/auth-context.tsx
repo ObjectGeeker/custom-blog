@@ -15,6 +15,8 @@ import type { LoginRequest } from "@/lib/types";
 interface AuthContextValue {
   token: string | null;
   isAuthenticated: boolean;
+  /** true after localStorage has been read on the client (avoids false redirects before sync). */
+  authReady: boolean;
   login: (data: LoginRequest) => Promise<void>;
   logout: () => void;
 }
@@ -23,9 +25,11 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
     setToken(getAuthToken());
+    setAuthReady(true);
   }, []);
 
   const login = useCallback(async (data: LoginRequest) => {
@@ -44,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         token,
         isAuthenticated: !!token,
+        authReady,
         login,
         logout,
       }}

@@ -35,17 +35,17 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
 
   return (
     <nav className="space-y-1 text-sm" aria-label="Table of contents">
-      <p className="mb-3 font-semibold">目录</p>
+      <p className="mb-3 font-semibold text-base-content">目录</p>
       {headings.map((h) => (
         <a
           key={h.id}
           href={`#${h.id}`}
           className={cn(
-            "block truncate py-1 text-muted-foreground transition-colors hover:text-foreground",
+            "block truncate py-1 text-base-content/60 transition-colors hover:text-base-content",
             h.level === 2 && "pl-3",
             h.level === 3 && "pl-6",
             h.level === 4 && "pl-9",
-            activeId === h.id && "font-medium text-foreground",
+            activeId === h.id && "font-medium text-base-content",
           )}
         >
           {h.text}

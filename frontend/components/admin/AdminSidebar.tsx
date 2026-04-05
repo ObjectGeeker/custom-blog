@@ -17,42 +17,45 @@ export function AdminSidebar() {
   const { logout } = useAuth();
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col border-r border-border bg-secondary/30">
-      <div className="flex h-14 items-center border-b border-border px-4">
-        <Link href="/admin/articles" className="text-lg font-semibold tracking-tight">
+    <aside className="flex w-60 shrink-0 flex-col border-r border-base-300 bg-base-100">
+      <div className="flex h-14 items-center border-b border-base-300 px-4">
+        <Link
+          href="/admin/articles"
+          className="text-lg font-semibold tracking-tight text-base-content"
+        >
           后台管理
         </Link>
       </div>
 
-      <nav className="flex-1 space-y-1 p-3">
+      <ul className="menu menu-lg w-full flex-1 flex-col gap-2 p-4">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = pathname.startsWith(item.href);
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                active
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-secondary hover:text-foreground",
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              {item.label}
-            </Link>
+            <li key={item.href} className="w-full">
+              <Link
+                href={item.href}
+                className={cn(
+                  "min-h-11 py-2.5 text-base",
+                  active && "menu-active bg-primary text-primary-content",
+                )}
+              >
+                <Icon className="h-5 w-5 shrink-0" />
+                {item.label}
+              </Link>
+            </li>
           );
         })}
-      </nav>
+      </ul>
 
-      <div className="border-t border-border p-3">
+      <div className="border-t border-base-300 p-3">
         <button
+          type="button"
           onClick={() => {
             logout();
             window.location.href = "/admin/login";
           }}
-          className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          className="btn btn-ghost btn-sm w-full justify-start font-normal text-base-content/70"
         >
           <LogOut className="h-4 w-4" />
           退出登录

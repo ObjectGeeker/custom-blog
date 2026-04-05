@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import { AppProviders } from "./providers";
 import "./globals.css";
 
 const inter = Inter({
@@ -26,9 +26,9 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} min-h-screen bg-background text-foreground antialiased`}
+        className={`${inter.variable} ${jetbrainsMono.variable} min-h-screen bg-base-100 font-sans text-base-content antialiased`}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );

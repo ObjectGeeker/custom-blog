@@ -56,12 +56,17 @@ export default function CategoriesPage() {
     fetchTree();
   }
 
+  async function handleReorderSiblings(parentId: string | null, orderedChildIds: string[]) {
+    await Promise.all(orderedChildIds.map((id, index) => updateCategory({ id, order: index })));
+    fetchTree();
+  }
+
   return (
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">分类管理</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          管理文章分类，支持最多四级分类
+          管理文章分类，支持最多四级分类；按住左侧手柄拖动可调整同级顺序
         </p>
       </div>
 
@@ -79,6 +84,7 @@ export default function CategoriesPage() {
             onCreate={handleCreate}
             onUpdate={handleUpdate}
             onDelete={handleDelete}
+            onReorderSiblings={handleReorderSiblings}
           />
         </div>
       )}

@@ -56,6 +56,10 @@ create index idx_parent_id
     on custom_blog.tb_category (parent_id)
     comment '父id索引';
 
+alter table tb_category
+    add `order` int default 1 not null comment '顺序号';
+
+
 
 create table tb_article
 (

@@ -23,6 +23,8 @@ export interface CategoryVO {
   businessLevel: number;
   path: string;
   parentId: string | null;
+  /** 同级排序，越小越靠前 */
+  order?: number | null;
   createTime: string;
   createUser: string;
   updateTime: string;
@@ -89,6 +91,7 @@ export interface CategoryUpdateRequest {
   categoryName?: string;
   categoryDesc?: string;
   parentId?: string;
+  order?: number;
 }
 
 export interface CategoryQueryRequest {

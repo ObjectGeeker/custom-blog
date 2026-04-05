@@ -42,6 +42,11 @@ public class CategoryVO {
     private String parentId;
 
     /**
+     * 顺序号
+     */
+    private Integer order;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;

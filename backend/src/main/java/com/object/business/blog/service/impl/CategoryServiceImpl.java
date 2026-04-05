@@ -1,6 +1,7 @@
 package com.object.business.blog.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,6 +17,7 @@ import com.object.business.blog.model.vo.CategoryVO;
 import com.object.business.blog.service.CategoryService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,7 +46,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         Category category = getById(request.getId());
         ThrowUtils.throwIf(category == null, ErrorCode.NOT_FOUND_ERROR, "分类不存在");
 
-        BeanUtil.copyProperties(request, category);
+        BeanUtil.copyProperties(request, category, CopyOptions.create().ignoreNullValue());
 
         // 如果修改了父级ID，需要重新计算路径
         if (request.getParentId() != null && !request.getParentId().equals(category.getParentId())) {
@@ -97,17 +99,20 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         // 转换为VO
         List<CategoryVO> voList = categories.stream().map(this::convertToVO).toList();
 
-        // 按父ID分组
+        // 按父ID分组，组内按顺序号排序
         Map<String, List<CategoryVO>> parentIdMap = voList.stream()
                 .filter(vo -> vo.getParentId() != null)
                 .collect(Collectors.groupingBy(CategoryVO::getParentId));
+        var orderCmp = Comparator.comparing(CategoryVO::getOrder, Comparator.nullsLast(Comparator.naturalOrder()));
+        parentIdMap.values().forEach(list -> list.sort(orderCmp));
 
         // 设置子节点
         voList.forEach(vo -> vo.setChildren(parentIdMap.get(vo.getId())));
 
-        // 返回根节点（parentId为空的）
+        // 返回根节点（parentId为空的），按顺序号排序
         return voList.stream()
                 .filter(vo -> StrUtil.isBlank(vo.getParentId()))
+                .sorted(orderCmp)
                 .collect(Collectors.toList());
     }
 
