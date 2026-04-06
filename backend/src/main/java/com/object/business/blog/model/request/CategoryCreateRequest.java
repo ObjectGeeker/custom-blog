@@ -11,6 +11,12 @@ import lombok.Data;
 public class CategoryCreateRequest {
 
     /**
+     * 主键 id（客户端生成 UUID，创建时用于拼接 path）
+     */
+    @NotBlank(message = "分类 id 不能为空")
+    private String id;
+
+    /**
      * 分类名字
      */
     @NotBlank(message = "分类名字不能为空")

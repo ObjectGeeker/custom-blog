@@ -46,7 +46,9 @@ public class SpringSecurityConfiguration {
             "/category/tree",
             // 文章查询接口
             "/article/getById",
-            "/article/list"
+            "/article/list",
+            // 静态资源
+            "/static/**"
     };
 
     @Bean
@@ -77,13 +79,20 @@ public class SpringSecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+    public SecurityFilterChain filterChain(
+            HttpSecurity httpSecurity,
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            StaticImageRefererFilter staticImageRefererFilter
+    ) throws Exception {
         // 使用JWT，所以禁用CSRF
         httpSecurity.csrf(CsrfConfigurer::disable)
                 // 启用 CORS 跨域
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // 禁用SESSION
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 须先注册 JWT 在链中的位置，再以其为锚点插入 Referer 过滤器（否则 6.5+ 报 “no registered order”）
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(staticImageRefererFilter, JwtAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizationRegistry -> authorizationRegistry
                         // 允许对于网站静态资源的无授权访问
                         .requestMatchers(HttpMethod.GET, "/", "/*.html", "/login.html").permitAll()
@@ -97,8 +106,6 @@ public class SpringSecurityConfiguration {
                         // 必须已认证才能访问
                         .authenticated()
                 )
-                // 添加自定义的处理器在前面执行
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 // 禁用缓存
                 .headers(headersConfigurer -> headersConfigurer
                         .cacheControl(HeadersConfigurer.CacheControlConfig::disable)

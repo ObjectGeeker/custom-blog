@@ -11,6 +11,12 @@ import lombok.Data;
 public class TagCreateRequest {
 
     /**
+     * 主键 id（客户端生成 UUID，创建时用于拼接 path）
+     */
+    @NotBlank(message = "标签 id 不能为空")
+    private String id;
+
+    /**
      * 标签名字
      */
     @NotBlank(message = "标签名字不能为空")

@@ -34,6 +34,7 @@ export default function CategoriesPage() {
 
   async function handleCreate(name: string, desc: string, parentId: string | null, level: number) {
     await createCategory({
+      id: crypto.randomUUID(),
       categoryName: name,
       categoryDesc: desc || undefined,
       businessLevel: level,

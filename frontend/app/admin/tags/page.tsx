@@ -34,6 +34,7 @@ export default function TagsPage() {
 
   async function handleCreate(name: string, desc: string, parentId: string | null, level: number) {
     await createTag({
+      id: crypto.randomUUID(),
       tagName: name,
       tagDesc: desc || undefined,
       businessLevel: level,

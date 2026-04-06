@@ -32,7 +32,7 @@ export default function HomePage() {
       <main className="flex-1">
         {/* Profile Section */}
         <section className="border-b border-base-200 bg-base-200/30">
-          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+          <div className="mx-auto max-w-screen-2xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
             <div className="flex flex-col items-center gap-8 text-center sm:flex-row sm:text-left">
               <div className="avatar">
                 <div className="w-24 rounded-full ring ring-base-200 ring-offset-2 ring-offset-base-100 sm:w-28">
@@ -70,7 +70,7 @@ export default function HomePage() {
         </section>
 
         {/* Latest Articles */}
-        <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <section className="mx-auto max-w-screen-2xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <h2 className="text-2xl font-bold tracking-tight text-base-content">最新文章</h2>
             <a

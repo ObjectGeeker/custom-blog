@@ -55,7 +55,7 @@ function SearchContent() {
     <>
       {/* Search Form */}
       <div className="border-b border-base-200 bg-base-200/20">
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+        <div className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
           <form onSubmit={handleSearch} className="relative mx-auto max-w-xl">
             <SearchIcon className="absolute left-4 top-1/2 z-1 h-5 w-5 -translate-y-1/2 text-base-content/40" />
             <input
@@ -84,7 +84,7 @@ function SearchContent() {
       </div>
 
       {/* Results */}
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (

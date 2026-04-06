@@ -80,6 +80,8 @@ export interface ArticleQueryRequest {
 }
 
 export interface CategoryCreateRequest {
+  /** 客户端生成的 UUID，与后端 path 拼接一致 */
+  id: string;
   categoryName: string;
   categoryDesc?: string;
   businessLevel: number;
@@ -101,6 +103,8 @@ export interface CategoryQueryRequest {
 }
 
 export interface TagCreateRequest {
+  /** 客户端生成的 UUID，与后端 path 拼接一致 */
+  id: string;
   tagName: string;
   tagDesc?: string;
   businessLevel: number;
@@ -130,4 +134,8 @@ export interface HeadingItem {
   id: string;
   text: string;
   level: number;
+}
+
+export interface UploadFileResponse {
+  fileUrl: string;
 }

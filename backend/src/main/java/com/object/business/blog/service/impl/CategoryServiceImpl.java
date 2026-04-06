@@ -33,7 +33,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         Category category = new Category();
         BeanUtil.copyProperties(request, category);
 
-        // 构建路径
         category.setPath(buildPath(request.getParentId(), category.getId()));
 
 

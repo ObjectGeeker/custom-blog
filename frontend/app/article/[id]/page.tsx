@@ -46,7 +46,7 @@ export default function ArticlePage() {
     return (
       <div className="flex min-h-screen flex-col bg-base-100">
         <Header />
-        <main className="mx-auto flex max-w-6xl flex-1 px-4 py-8 sm:px-6">
+        <main className="mx-auto flex w-full max-w-screen-2xl flex-1 px-4 py-8 sm:px-6">
           <div className="flex-1 space-y-4">
             <div className="skeleton h-10 w-2/3" />
             <div className="skeleton h-6 w-1/3" />
@@ -83,9 +83,9 @@ export default function ArticlePage() {
     <div className="flex min-h-screen flex-col bg-base-100">
       <Header />
 
-      <main className="mx-auto flex w-full max-w-6xl flex-1 gap-6 px-4 py-8 sm:px-6">
+      <main className="mx-auto flex w-full max-w-screen-2xl flex-1 gap-6 px-4 py-8 sm:px-6 lg:px-8">
         {/* Left Sidebar - Related Articles */}
-        <aside className="hidden w-56 shrink-0 lg:block">
+        <aside className="hidden w-48 shrink-0 lg:block">
           <div className="sticky top-24">
             <p className="mb-3 text-sm font-semibold text-base-content">同分类文章</p>
             {relatedArticles.length === 0 ? (
@@ -106,7 +106,7 @@ export default function ArticlePage() {
 
         {/* Main Content */}
         <article className="card card-border min-w-0 flex-1 border-base-200 bg-base-100 shadow-sm">
-          <div className="card-body px-4 py-8 sm:px-8">
+          <div className="card-body px-4 py-8 sm:px-8 xl:px-10">
           <header className="mb-8 border-b border-base-200 pb-6">
             <h1 className="mb-4 text-3xl font-bold tracking-tight text-base-content">
               {article.title}
@@ -140,7 +140,7 @@ export default function ArticlePage() {
         </article>
 
         {/* Right Sidebar - TOC */}
-        <aside className="hidden w-52 shrink-0 xl:block">
+        <aside className="hidden w-44 shrink-0 xl:block">
           <div className="sticky top-24 rounded-box border border-base-200 bg-base-100 p-4">
             <TableOfContents headings={headings} />
           </div>

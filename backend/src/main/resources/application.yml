@@ -11,6 +11,14 @@ spring:
 server:
   servlet:
     context-path: /api
+
+blog:
+  security:
+    static-image-referer:
+      enabled: true
+      allowed-hosts:
+        - blog.objectgeeker.com
+      allow-empty-referer: false
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

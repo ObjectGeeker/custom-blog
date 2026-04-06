@@ -12,8 +12,8 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="navbar sticky top-0 z-40 border-b border-base-200 bg-base-100/85 px-4 backdrop-blur-md sm:px-6">
-      <div className="navbar mx-auto min-h-14 w-full max-w-6xl justify-between gap-2 px-0">
+    <header className="navbar sticky top-0 z-40 border-b border-base-200 bg-base-100/85 px-4 backdrop-blur-md sm:px-6 lg:px-8">
+      <div className="navbar mx-auto min-h-14 w-full max-w-screen-2xl justify-between gap-2 px-0">
         <div className="navbar-start w-auto shrink-0">
           <Link
             href="/"
@@ -45,7 +45,7 @@ export function Header() {
 
       {mobileOpen && (
         <div className="border-t border-base-200 px-4 pb-4 pt-3 md:hidden">
-          <div className="mx-auto flex max-w-6xl flex-col gap-3">
+          <div className="mx-auto flex max-w-screen-2xl flex-col gap-3">
             <SearchBar />
             <CategoryNav />
           </div>

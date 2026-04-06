@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Editor } from "@bytemd/react";
 import gfmPlugin from "@bytemd/plugin-gfm";
 import highlightPlugin from "@bytemd/plugin-highlight";
 import { getCategoryTree } from "@/lib/api/category";
 import { getTagTree } from "@/lib/api/tag";
+import { uploadFile } from "@/lib/api/file";
 import type { CategoryVO, TagVO } from "@/lib/types";
 import "bytemd/dist/index.css";
 import "highlight.js/styles/github.css";
@@ -57,6 +58,22 @@ export function ArticleForm({
   const [tagTree, setTagTree] = useState<TagVO[]>([]);
 
   const plugins = useMemo(() => [gfmPlugin(), highlightPlugin()], []);
+
+  const uploadImages = useCallback(async (files: File[]) => {
+    try {
+      const results = await Promise.all(
+        files.map(async (file) => {
+          const { fileUrl } = await uploadFile(file);
+          return { url: fileUrl };
+        }),
+      );
+      return results;
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "上传失败";
+      window.alert(`图片上传失败：${msg}`);
+      throw e;
+    }
+  }, []);
 
   useEffect(() => {
     getCategoryTree().then(setCategoryTree).catch(() => {});
@@ -188,7 +205,7 @@ export function ArticleForm({
         <label className="mb-1.5 block text-sm font-medium">
           文章内容 <span className="text-destructive">*</span>
         </label>
-        <Editor value={content} plugins={plugins} onChange={setContent} />
+        <Editor value={content} plugins={plugins} onChange={setContent} uploadImages={uploadImages} />
       </div>
 
       {/* Submit */}
