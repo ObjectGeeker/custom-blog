@@ -7,6 +7,7 @@ export interface BaseResponse<T> {
 export interface ArticleVO {
   id: string;
   title: string;
+  summary: string;
   content: string;
   tags: string[];
   categories: string[];
@@ -60,6 +61,7 @@ export interface LoginResponse {
 
 export interface ArticleCreateRequest {
   title: string;
+  summary?: string;
   content: string;
   tags: string[];
   categories: string[];
@@ -68,6 +70,7 @@ export interface ArticleCreateRequest {
 export interface ArticleUpdateRequest {
   id: string;
   title?: string;
+  summary?: string;
   content?: string;
   tags?: string[];
   categories?: string[];

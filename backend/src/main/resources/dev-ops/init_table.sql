@@ -66,6 +66,7 @@ create table tb_article
     id         varchar(50)  not null comment '文章id'
         primary key,
     title      varchar(50)  not null comment '文章标题',
+    summary    varchar(300) not null default '' comment '文章简述',
     content    longtext     not null comment '文章内容',
     tags       varchar(100) not null comment '文章标签(JSON数组)',
     categories varchar(100) not null comment '文章分类(JSON数组)',

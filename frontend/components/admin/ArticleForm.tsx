@@ -13,6 +13,7 @@ import "highlight.js/styles/github.css";
 
 interface ArticleFormProps {
   initialTitle?: string;
+  initialSummary?: string;
   initialContent?: string;
   initialCategories?: string[];
   initialTags?: string[];
@@ -20,6 +21,7 @@ interface ArticleFormProps {
   loading: boolean;
   onSubmit: (data: {
     title: string;
+    summary: string;
     content: string;
     categories: string[];
     tags: string[];
@@ -42,6 +44,7 @@ function flattenTree<T extends { id: string; children: T[] }>(
 
 export function ArticleForm({
   initialTitle = "",
+  initialSummary = "",
   initialContent = "",
   initialCategories = [],
   initialTags = [],
@@ -50,6 +53,7 @@ export function ArticleForm({
   onSubmit,
 }: ArticleFormProps) {
   const [title, setTitle] = useState(initialTitle);
+  const [summary, setSummary] = useState(initialSummary);
   const [content, setContent] = useState(initialContent);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialCategories);
   const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
@@ -122,6 +126,7 @@ export function ArticleForm({
     if (selectedCategories.length === 0 || selectedTags.length === 0) return;
     onSubmit({
       title: title.trim(),
+      summary: summary.trim(),
       content,
       categories: selectedCategories,
       tags: selectedTags,
@@ -144,6 +149,23 @@ export function ArticleForm({
           required
           className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
         />
+      </div>
+
+      {/* Summary */}
+      <div>
+        <label htmlFor="summary" className="mb-1.5 block text-sm font-medium">
+          文章简述
+        </label>
+        <textarea
+          id="summary"
+          value={summary}
+          onChange={(e) => setSummary(e.target.value)}
+          placeholder="简要描述文章内容，用于列表展示"
+          rows={3}
+          maxLength={300}
+          className="w-full resize-none rounded-md border border-border bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
+        />
+        <p className="mt-1 text-xs text-muted-foreground">{summary.length}/300</p>
       </div>
 
       {/* Categories */}

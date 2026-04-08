@@ -8,7 +8,12 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import { getAuthToken, setAuthToken, removeAuthToken } from "@/lib/api/client";
+import {
+  getAuthToken,
+  setAuthToken,
+  removeAuthToken,
+  onTokenChange,
+} from "@/lib/api/client";
 import { login as loginApi } from "@/lib/api/auth";
 import type { LoginRequest } from "@/lib/types";
 
@@ -30,6 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setToken(getAuthToken());
     setAuthReady(true);
+    return onTokenChange((t) => setToken(t));
   }, []);
 
   const login = useCallback(async (data: LoginRequest) => {

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Calendar, Tag } from "lucide-react";
+import { Calendar, Tag, FolderOpen } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import type { ArticleVO } from "@/lib/types";
 
@@ -16,15 +16,24 @@ export function ArticleCard({ article }: ArticleCardProps) {
             {article.title}
           </h3>
 
-          <p className="line-clamp-2 text-sm leading-relaxed text-base-content/60">
-            {article.content.replace(/[#*`>\-\[\]()!]/g, "").slice(0, 120)}...
-          </p>
+          {article.summary && (
+            <p className="line-clamp-2 text-sm leading-relaxed text-base-content/60">
+              {article.summary}
+            </p>
+          )}
 
           <div className="card-actions flex flex-wrap items-center gap-3 text-xs text-base-content/50">
             <span className="flex items-center gap-1">
               <Calendar className="h-3.5 w-3.5" />
               {formatDate(article.createTime)}
             </span>
+
+            {article.categories.length > 0 && (
+              <span className="flex items-center gap-1">
+                <FolderOpen className="h-3.5 w-3.5" />
+                {article.categories.slice(0, 3).join(", ")}
+              </span>
+            )}
 
             {article.tags.length > 0 && (
               <span className="flex items-center gap-1">

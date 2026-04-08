@@ -27,6 +27,7 @@ export default function EditArticlePage() {
 
   async function handleSubmit(data: {
     title: string;
+    summary: string;
     content: string;
     categories: string[];
     tags: string[];
@@ -68,6 +69,7 @@ export default function EditArticlePage() {
 
       <ArticleForm
         initialTitle={article.title}
+        initialSummary={article.summary}
         initialContent={article.content}
         initialCategories={article.categories}
         initialTags={article.tags}

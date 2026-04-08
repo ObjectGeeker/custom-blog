@@ -13,6 +13,7 @@ export default function NewArticlePage() {
 
   async function handleSubmit(data: {
     title: string;
+    summary: string;
     content: string;
     categories: string[];
     tags: string[];
