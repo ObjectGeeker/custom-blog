@@ -14,16 +14,40 @@ import com.object.business.blog.model.request.ArticleQueryRequest;
 import com.object.business.blog.model.request.ArticleUpdateRequest;
 import com.object.business.blog.model.vo.ArticleVO;
 import com.object.business.blog.service.ArticleService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 文章表 服务实现类
  */
+@Slf4j
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
+
+    @Value("${blog.file.upload-dir:uploads}")
+    private String uploadDir;
+
+    @Value("${server.servlet.context-path:}")
+    private String contextPath;
+
+    /** Markdown 图片: ![alt](/api/static/userId/file.jpg) */
+    private static final Pattern MD_IMAGE_PATTERN =
+            Pattern.compile("!\\[.*?]\\(([^)]+)\\)");
+
+    /** HTML img 标签: <img src="/api/static/userId/file.jpg"> */
+    private static final Pattern HTML_IMAGE_PATTERN =
+            Pattern.compile("<img[^>]+src=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE);
 
     @Override
     public String createArticle(ArticleCreateRequest request) {
@@ -46,6 +70,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (StrUtil.isNotBlank(request.getTitle())) {
             article.setTitle(request.getTitle());
         }
+        if (request.getSummary() != null) {
+            article.setSummary(request.getSummary());
+        }
         if (StrUtil.isNotBlank(request.getContent())) {
             article.setContent(request.getContent());
         }
@@ -61,6 +88,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public boolean deleteArticle(String id) {
+        Article article = getById(id);
+        ThrowUtils.throwIf(article == null, ErrorCode.NOT_FOUND_ERROR, "文章不存在");
+
+        deleteReferencedFiles(article.getContent());
+
         return removeById(id);
     }
 
@@ -90,12 +122,63 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     /**
+     * 从 Markdown 内容中提取引用的文件 URL，并删除对应的本地文件
+     */
+    private void deleteReferencedFiles(String content) {
+        if (StrUtil.isBlank(content)) {
+            return;
+        }
+
+        String staticPrefix = normalizeContextPath(contextPath) + "/static/";
+        Set<String> relativePaths = new HashSet<>();
+
+        extractRelativePaths(MD_IMAGE_PATTERN, content, staticPrefix, relativePaths);
+        extractRelativePaths(HTML_IMAGE_PATTERN, content, staticPrefix, relativePaths);
+
+        Path uploadRoot = Paths.get(uploadDir).toAbsolutePath().normalize();
+        for (String relativePath : relativePaths) {
+            Path filePath = uploadRoot.resolve(relativePath).normalize();
+            if (!filePath.startsWith(uploadRoot)) {
+                log.warn("跳过非法文件路径: {}", filePath);
+                continue;
+            }
+            try {
+                boolean deleted = Files.deleteIfExists(filePath);
+                if (deleted) {
+                    log.info("已删除文件: {}", filePath);
+                }
+            } catch (IOException e) {
+                log.warn("删除文件失败: {}", filePath, e);
+            }
+        }
+    }
+
+    private static void extractRelativePaths(Pattern pattern, String content,
+                                             String staticPrefix, Set<String> out) {
+        Matcher matcher = pattern.matcher(content);
+        while (matcher.find()) {
+            String url = matcher.group(1);
+            if (url.startsWith(staticPrefix)) {
+                out.add(url.substring(staticPrefix.length()));
+            }
+        }
+    }
+
+    private static String normalizeContextPath(String contextPath) {
+        if (StrUtil.isBlank(contextPath) || "/".equals(contextPath)) {
+            return "";
+        }
+        return contextPath.endsWith("/")
+                ? contextPath.substring(0, contextPath.length() - 1)
+                : contextPath;
+    }
+
+    /**
      * 转换为视图对象
      */
     private ArticleVO convertToVO(Article article) {
         ArticleVO vo = new ArticleVO();
         BeanUtil.copyProperties(article, vo, "tags", "categories", "createUser", "updateUser");
-        // 将JSON字符串转换为列表
         vo.setTags(JSONUtil.toList(article.getTags(), String.class));
         vo.setCategories(JSONUtil.toList(article.getCategories(), String.class));
         return vo;

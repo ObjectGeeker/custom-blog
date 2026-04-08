@@ -36,6 +36,7 @@ public class SpringSecurityConfiguration {
     private final String[] permitAllMatchers = {
             // 登录接口
             "/security/login",
+            "/security/refresh_token",
             // 标签查询接口
             "/tag/getById",
             "/tag/list",
@@ -130,7 +131,7 @@ public class SpringSecurityConfiguration {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
         // 直接返回统一响应
-        response.getWriter().write("{\"code\":403,\"message\":\"无权限访问\"}");
+        response.getWriter().write("{\"code\":40300,\"message\":\"无权限访问\"}");
     }
 
     private void handleAuthentication(HttpServletRequest request,
@@ -142,7 +143,7 @@ public class SpringSecurityConfiguration {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
         // 直接返回统一响应
-        response.getWriter().write("{\"code\":401,\"message\":\"未登录\"}");
+        response.getWriter().write("{\"code\":40100,\"message\":\"未登录\"}");
     }
 
 }

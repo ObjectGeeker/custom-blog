@@ -24,6 +24,11 @@ public class Article {
     private String title;
 
     /**
+     * 文章简述
+     */
+    private String summary;
+
+    /**
      * 文章内容
      */
     private String content;

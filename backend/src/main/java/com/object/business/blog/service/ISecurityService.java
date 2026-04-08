@@ -2,6 +2,7 @@ package com.object.business.blog.service;
 
 import com.object.business.blog.model.request.LoginRequest;
 import com.object.business.blog.model.response.LoginResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface ISecurityService {
@@ -14,4 +15,13 @@ public interface ISecurityService {
      * @return 登录返回体
      */
     LoginResponse login(LoginRequest loginRequest, HttpServletResponse response);
+
+    /**
+     * 根据refresh_token刷新access_token
+     *
+     * @param request  http request
+     * @param response http response
+     * @return 登录返回体
+     */
+    LoginResponse refreshToken(HttpServletRequest request, HttpServletResponse response);
 }
