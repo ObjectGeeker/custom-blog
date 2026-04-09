@@ -2,10 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { getCategoryTree } from "@/lib/api/category";
 import type { CategoryVO } from "@/lib/types";
 import { cn } from "@/lib/utils";
+
+function categoryHref(name: string) {
+  return `/search?category=${encodeURIComponent(name)}`;
+}
 
 function CategoryMenuItem({
   cat,
@@ -14,12 +18,13 @@ function CategoryMenuItem({
   cat: CategoryVO;
   onNavigate: () => void;
 }) {
+  const [expanded, setExpanded] = useState(false);
   const hasChildren = cat.children && cat.children.length > 0;
 
   if (!hasChildren) {
     return (
       <li>
-        <Link href={`/search?category=${cat.id}`} onClick={onNavigate}>
+        <Link href={categoryHref(cat.categoryName)} onClick={onNavigate}>
           {cat.categoryName}
         </Link>
       </li>
@@ -28,14 +33,42 @@ function CategoryMenuItem({
 
   return (
     <li>
-      <details>
-        <summary>{cat.categoryName}</summary>
+      <div className="flex items-center gap-0 rounded-btn p-0 hover:bg-base-200">
+        <Link
+          href={categoryHref(cat.categoryName)}
+          onClick={onNavigate}
+          className="flex-1 px-3 py-1.5"
+        >
+          {cat.categoryName}
+        </Link>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setExpanded(!expanded);
+          }}
+          className="rounded-btn px-2 py-1.5 opacity-50 hover:bg-base-300 hover:opacity-100"
+        >
+          <ChevronRight
+            className={cn(
+              "h-3 w-3 transition-transform",
+              expanded && "rotate-90",
+            )}
+          />
+        </button>
+      </div>
+      {expanded && (
         <ul>
           {cat.children.map((child) => (
-            <CategoryMenuItem key={child.id} cat={child} onNavigate={onNavigate} />
+            <CategoryMenuItem
+              key={child.id}
+              cat={child}
+              onNavigate={onNavigate}
+            />
           ))}
         </ul>
-      </details>
+      )}
     </li>
   );
 }
@@ -58,7 +91,7 @@ function CategoryItem({ cat }: { cat: CategoryVO }) {
   if (!hasChildren) {
     return (
       <Link
-        href={`/search?category=${cat.id}`}
+        href={categoryHref(cat.categoryName)}
         className="btn btn-ghost btn-sm font-normal text-base-content/80 hover:text-base-content"
       >
         {cat.categoryName}
@@ -69,20 +102,33 @@ function CategoryItem({ cat }: { cat: CategoryVO }) {
   return (
     <div
       ref={ref}
-      className={cn("dropdown dropdown-bottom dropdown-start", open && "dropdown-open")}
+      className={cn(
+        "dropdown dropdown-bottom dropdown-start",
+        open && "dropdown-open",
+      )}
     >
-      <button
-        type="button"
-        tabIndex={0}
-        className="btn btn-ghost btn-sm gap-1 font-normal text-base-content/80 hover:text-base-content"
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-      >
-        {cat.categoryName}
-        <ChevronDown
-          className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")}
-        />
-      </button>
+      <div className="flex items-center">
+        <Link
+          href={categoryHref(cat.categoryName)}
+          className="btn btn-ghost btn-sm rounded-r-none pr-1.5 font-normal text-base-content/80 hover:text-base-content"
+        >
+          {cat.categoryName}
+        </Link>
+        <button
+          type="button"
+          tabIndex={0}
+          className="btn btn-ghost btn-sm rounded-l-none pl-0.5 pr-1.5 text-base-content/80 hover:text-base-content"
+          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+        >
+          <ChevronDown
+            className={cn(
+              "h-3.5 w-3.5 transition-transform",
+              open && "rotate-180",
+            )}
+          />
+        </button>
+      </div>
       <ul
         tabIndex={-1}
         className="dropdown-content menu menu-sm z-[100] mb-1 mt-1 max-h-[min(70vh,24rem)] w-52 overflow-y-auto overflow-x-hidden rounded-box border border-base-200 bg-base-100 p-2 shadow-lg"
